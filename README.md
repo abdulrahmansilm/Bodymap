@@ -4,18 +4,10 @@
 
 ---
 
-## Projekt starten
-
 ```bash
 # Repo klonen
 git clone https://github.com/abdulrahmansilm/Bodymap.git
 cd Bodymap
-
-# Abhängigkeiten installieren
-npm install
-
-# App starten
-npm run dev
 
 ```
 
@@ -24,19 +16,19 @@ npm run dev
 # Regeln
 
 > [!IMPORTANT]
- ** Issues**
+Issues:
 > - Alle Aufgaben stehen als Issues im Repo
 > - Jeder nimmt sich **3–4 Issues**
 > - Markiere deine Issues mit einem **Label mit deinem Namen**
 > - Nimm dir eine **Mischung aus leichten und schweren Issues** — nicht nur die einfachen
  
 > [!IMPORTANT]
- ** Reihenfolge**
+Reihenfolge:
 > - Issues werden **nach Phasen** bearbeitet — erst Phase 1, dann Phase 2, dann Phase 3
 > - **Nicht vorausarbeiten** solange die vorherige Phase noch offen ist
  
 > [!WARNING]
- ** Branches**
+Branches:
 > - Jedes Issue gehört zu einem Branch (steht am Label) — **push immer in den richtigen Branch**
 > - **NIEMALS direkt auf `main` pushen** — `main` ist nur für die finale Abgabe am letzten Tag
 > - Jeder Push geht per **Pull Request** rein — kein direktes Pushen auf `develop` oder `main`
