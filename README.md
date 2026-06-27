@@ -1,6 +1,22 @@
 # BodyMap
 
 
+## Authentifizierung (HTTPS)
+
+
+### Token erstellen
+1. GitHub → Settings → Developer Settings → Personal access tokens → Tokens (classic)
+2. "Generate new token (classic)" klicken
+3. Name eingeben (z.B. "bodymap"), Expiration: 90 days, Scope: **repo** anhaken
+4. Token generieren und kopieren — wird nur einmal angezeigt!
+
+### Token einrichten
+```bash
+git remote set-url origin https://DEIN-GITHUB-USERNAME:DEIN-TOKEN@github.com/abdulrahmansilm/Bodymap.git
+```
+
+Danach funktioniert `git push` normal ohne Passwort-Abfrage.
+
 
 ---
 
@@ -64,7 +80,4 @@ git commit -m "feat: kurze Beschreibung"
 git push origin [branch in den ein issue bearbeitest]
 ```
 
-Danach einen **Pull Request** auf `develop` erstellen und jemanden als Reviewer eintragen.
 
-- Feature-Branch → `develop`: PR mit Reviewer
-- `develop` → `main`: PR, nur am letzten Tag für die Abgabe
