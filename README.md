@@ -42,42 +42,7 @@ Issues:
 Reihenfolge:
 > - Issues werden **nach Phasen** bearbeitet — erst Phase 1, dann Phase 2, dann Phase 3
 > - **Nicht vorausarbeiten** solange die vorherige Phase noch offen ist
- 
-> [!WARNING]
-Branches:
-> - Jedes Issue gehört zu einem Branch (steht am Label) — **push immer in den richtigen Branch**
-> - **NIEMALS direkt auf `main` pushen** — `main` ist nur für die finale Abgabe am letzten Tag
+
 > - Jeder Push geht per **Pull Request** rein — kein direktes Pushen auf `develop` oder `main`
  
 ---
-
----
-
-## Branch-Struktur
-
-```
-main              ← nur finale Abgabe (letzter Tag)
-└── develop       ← tägliche Integration
-    ├── onboarding       ← Phase 1: Onboarding Screens 1–9
-    ├── home-and-plan    ← Phase 2: Home + KI-Integration
-    └── workout          ← Phase 3: Workout-Modus + Timer + ExerciseDB
-```
-
----
-
-## Täglicher Workflow
-
-```bash
-git checkout develop
-git pull origin develop
-git checkout [branch in den ein issue bearbeitest] 
-git merge develop
-
-# arbeiten...
-
-git add .
-git commit -m "feat: kurze Beschreibung"
-git push origin [branch in den ein issue bearbeitest]
-```
-
-
