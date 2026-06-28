@@ -43,6 +43,4 @@ Reihenfolge:
 > - Issues werden **nach Phasen** bearbeitet — erst Phase 1, dann Phase 2, dann Phase 3
 > - **Nicht vorausarbeiten** solange die vorherige Phase noch offen ist
 
-> - Jeder Push geht per **Pull Request** rein — kein direktes Pushen auf `develop` oder `main`
- 
----
+
