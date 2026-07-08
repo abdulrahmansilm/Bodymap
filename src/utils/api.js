@@ -14,70 +14,104 @@ export async function generatePlan(user) {
         },
         {
           role: 'user',
-          content: `Du bist ein erfahrener, zertifizierter Personal Trainer. Erstelle einen hochpersonalisierten Trainingsplan.
+         content: `You are an elite personal trainer and sports scientist with 15 years of experience. Your job is to create a truly personalized training plan. These are guidelines to help you, but YOU must make the final decision based on the complete profile of this specific person.
 
-NUTZERPROFIL:
+USER PROFILE:
 - Name: ${user.name}
-- Alter: ${user.age} Jahre
-- Größe: ${user.height}cm, Gewicht: ${user.weight}kg
-- Geschlecht: ${user.gender}
-- Ziel: ${user.goal}
-- Erfahrung: ${user.experience}
-- Alltag: ${user.lifestyle}
-- Gewünschte Trainingstage: ${user.days} pro Woche
-- Dauer pro Einheit: ${user.duration} Minuten
-- Trainingsort: ${user.location}
-- Sportarten: ${user.sport.join(', ') || 'keine'}
-- Verletzungen: ${user.injuries.join(', ') || 'keine'}
+- Age: ${user.age} years
+- Height: ${user.height}cm, Weight: ${user.weight}kg, BMI: ${(user.weight / ((user.height/100)**2)).toFixed(1)}
+- Gender: ${user.gender}
+- Goal: ${user.goal}
+- Experience level: ${user.experience}
+- Daily lifestyle: ${user.lifestyle}
+- Desired training days: ${user.days} per week
+- Session duration: ${user.duration} minutes
+- Training location: ${user.location}
+- Sports activities: ${user.sport.join(', ') || 'none'}
+- Injuries/limitations: ${user.injuries.join(', ') || 'none'}
 
-PERSONALISIERUNGSREGELN:
-1. RUHETAGE:
-   - Anfänger: nie 2 Tage hintereinander
-   - 1 Tag: Samstag
-   - 2 Tage: Dienstag + Samstag
-   - 3 Tage: Montag + Mittwoch + Freitag
-   - 4 Tage: Montag + Dienstag + Donnerstag + Samstag
-   - 5 Tage: Montag + Dienstag + Donnerstag + Freitag + Sonntag
+GUIDELINES (use your professional judgment to adapt these for this specific person):
 
-2. ÜBUNGSANZAHL pro Einheit:
-   - Anfänger: ${Math.round(user.duration / 8)} bis ${Math.round(user.duration / 6)} Übungen
-   - Fortgeschrittene: ${Math.round(user.duration / 7)} bis ${Math.round(user.duration / 5)} Übungen
+AGE GUIDELINES:
+- Younger users generally tolerate higher intensity, more volume and heavier weights
+- Older users generally need lower intensity, more rest, joint-friendly exercises and mobility work
+- However, YOU decide what is appropriate based on the full profile — a very active 65 year old may need more challenge than a sedentary 30 year old
+- Consider the combination of age + experience + lifestyle together, not age alone
 
-3. ÜBUNGSAUSWAHL:
-   - Verletzungen berücksichtigen: ${user.injuries.join(', ') || 'keine'}
-   - Ort: ${user.location}
-   - Ziel: ${user.goal}
+BMI GUIDELINES:
+- Higher BMI may suggest avoiding high-impact exercises and focusing on movement quality
+- Lower BMI may suggest focusing on muscle building
+- But YOU decide based on the goal and full context — BMI alone does not determine the plan
 
-4. SPLIT:
-   - 1-2 Tage: Ganzkörper
-   - 3 Tage: Oberkörper/Unterkörper/Ganzkörper
-   - 4+ Tage: Muskelgruppen aufteilen
+EXPERIENCE GUIDELINES:
+- Beginners generally need simpler movements and less volume
+- Advanced users can handle more complexity and volume
+- But YOU decide — someone returning after years may need to start fresh even if experienced before
 
-5. SETS UND PAUSEN:
-   - muscle: 3-5 Sets, 6-10 Reps, 90-120s Pause
-   - lose: 3 Sets, 12-15 Reps, 45-60s Pause
-   - fit: 3 Sets, 10-12 Reps, 60-90s Pause
+LIFESTYLE GUIDELINES:
+- Sedentary lifestyle may benefit from posture and core work
+- Physically active jobs may need lighter training to avoid overtraining
+- But YOU decide how much to adjust based on the full picture
 
-Antworte NUR mit validem JSON:
+GOAL GUIDELINES:
+- muscle: generally higher weights, lower reps, longer rest
+- lose: generally more reps, shorter rest, higher heart rate
+- fit: generally balanced approach
+- health: generally functional and mobility focused
+- But YOU decide the exact balance based on age, experience and lifestyle together
+
+VOLUME GUIDELINES:
+- A ${user.duration} minute session can realistically fit ${Math.floor(user.duration / 8)} to ${Math.floor(user.duration / 6)} exercises
+- Older or less experienced users need more time per exercise
+- But YOU decide the exact number based on the complete profile
+
+SPLIT GUIDELINES:
+- Fewer days and less experience generally means full body
+- More days and more experience generally means split training
+- But YOU decide the best split considering ALL factors together
+
+INJURY GUIDELINES:
+- Respect all injuries and limitations listed: ${user.injuries.join(', ') || 'none'}
+- Avoid exercises that directly stress injured areas
+- But YOU decide the best alternatives and modifications
+
+LOCATION:
+- Only suggest exercises possible at: ${user.location}
+- This is a hard rule, not a guideline
+
+After reading the full profile, make your own professional judgment call. Ask yourself: what would I actually prescribe to this specific person if they walked into my gym today?
+
+Write the personalNote in German explaining specifically what YOU noticed about this profile and why you made these specific choices.
+
+IMPORTANT: sets, reps and rest must be chosen by YOU based on the profile. Do NOT use the example values. A 70 year old needs different reps than a 25 year old. A weight loss goal needs different reps than a muscle building goal. Choose every number yourself based on the complete profile.
+
+Respond ONLY with valid JSON, no text before or after:
 {
   "summary": "${user.days}x pro Woche · ${user.duration} min · ${user.location}",
-  "personalNote": "Kurze Erklärung warum dieser Plan optimal ist",
+  "splitType": "Name der Split-Methode auf Deutsch",
+  "personalNote": "Erkläre auf Deutsch sehr spezifisch was du an diesem Profil bemerkt hast und warum du genau diese Entscheidungen getroffen hast",
   "days": [
     {
       "label": "Montag",
-      "name": "Oberkörper-Tag",
-      "focus": "Brust und Schultern",
+      "name": "Ganzkörper A",
+      "focus": "Full Body",
       "exercises": [
         {
-          "name": "Bankdrücken",
-          "searchTerm": "barbell bench press",
-          "sets": 3,
-          "reps": 10,
-          "rest": 90,
-          "muscle": "Brust",
-          "why": "Warum diese Übung.",
-          "tip": "Ausführungstipp."
-        }
+  "name": "Übungsname auf Deutsch",
+  "searchTerm": "exercise name in english for database",
+  "sets": null,
+  "reps": null,
+  "rest": null,
+  "muscle": "Muskelgruppe auf Deutsch",
+  "why": "Warum diese Übung speziell für dieses Profil auf Deutsch.",
+  "tip": "Ausführungstipp auf Deutsch.",
+  "instructions": [
+    "Schritt 1 auf Deutsch.",
+    "Schritt 2 auf Deutsch.",
+    "Schritt 3 auf Deutsch.",
+    "Schritt 4 auf Deutsch."
+  ]
+}
       ]
     }
   ]
@@ -105,23 +139,40 @@ export async function fetchExerciseData(searchTerm) {
   if (EXERCISE_CACHE[searchTerm]) return EXERCISE_CACHE[searchTerm]
   try {
     const res = await fetch(
-      `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(searchTerm)}?limit=1`,
+      `https://api.workoutxapp.com/v1/exercises/name/${encodeURIComponent(searchTerm)}?limit=1`,
       {
         headers: {
-          'X-RapidAPI-Key': import.meta.env.VITE_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com'
+          'X-WorkoutX-Key': import.meta.env.VITE_WORKOUTX_KEY
         }
       }
     )
     const data = await res.json()
-    if (!data[0]) return null
-    const ex = data[0]
+    if (!data.data || data.data.length === 0) return null
+    const ex = data.data[0]
+
+    // Fetch GIF as blob with auth header
+    let gifBlobUrl = null
+    if (ex.gifUrl) {
+      try {
+        const gifRes = await fetch(ex.gifUrl, {
+          headers: {
+            'X-WorkoutX-Key': import.meta.env.VITE_WORKOUTX_KEY
+          }
+        })
+        const blob = await gifRes.blob()
+        gifBlobUrl = URL.createObjectURL(blob)
+      } catch {
+        gifBlobUrl = null
+      }
+    }
+
     const result = {
       bodyPart: ex.bodyPart,
       equipment: ex.equipment,
       instructions: ex.instructions || [],
       description: ex.description || '',
       difficulty: ex.difficulty || '',
+      gifUrl: gifBlobUrl,
     }
     EXERCISE_CACHE[searchTerm] = result
     return result

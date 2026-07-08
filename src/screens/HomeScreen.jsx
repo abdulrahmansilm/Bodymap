@@ -27,7 +27,7 @@ export default function HomeScreen({ user, plan, goTo, setWorkoutState, complete
             <div style={{ fontSize: 15, color: T.textMuted, marginTop: 6 }}>
               <span style={{ fontSize: 22, fontWeight: 700, color: T.primary }}>
                 {completedDays.length}
-              </span> Trainingstage diese Woche 🔥
+              </span> Trainingstage diese Woche 
             </div>
           </div>
           <button onClick={onReset} style={{
