@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from './firebase'
 import { generatePlan } from './utils/api'
+import AuthPage from './screens/AuthPage'
+import { useAuth } from './AuthContext'
 import OnboardingScreen from './screens/OnboardingScreen'
 import LoadingScreen from './screens/LoadingScreen'
 import HomeScreen from './screens/HomeScreen'
 import PlanScreen from './screens/PlanScreen'
 import WorkoutScreen from './screens/WorkoutScreen'
 import DashboardScreen from './screens/DashboardScreen'
+import ProfileScreen from './screens/ProfileScreen'
 import { T } from './tokens'
 
 const INITIAL_USER = {
@@ -20,48 +25,131 @@ const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'dashboard', label: 'Stats' },
   { id: 'plan', label: 'Plan' },
+  { id: 'profile', label: 'Du' },
 ]
 
-function loadState() {
-  try {
-    const saved = localStorage.getItem('bodymap_state')
-    if (saved) return JSON.parse(saved)
-  } catch { }
-  return null
-}
-
-function saveState(state) {
-  try {
-    localStorage.setItem('bodymap_state', JSON.stringify(state))
-  } catch { }
-}
-
 export default function App() {
-  const saved = loadState()
+  const { currentUser, authLoading } = useAuth()
 
-  const [screen, setScreen] = useState(saved?.plan ? 'home' : 'onboarding')
+  const [dataLoading, setDataLoading] = useState(false)
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  const [screen, setScreen] = useState('onboarding')
   const [step, setStep] = useState(1)
-  const [user, setUser] = useState(saved?.user || INITIAL_USER)
-  const [plan, setPlan] = useState(saved?.plan || null)
-  const [completedDays, setCompletedDays] = useState(saved?.completedDays || [])
-  const [workoutState, setWorkoutState] = useState({ dayIndex: 0, exerciseIndex: 0, setIndex: 0 })
+  const [user, setUser] = useState(INITIAL_USER)
+  const [plan, setPlan] = useState(null)
+  const [completedDays, setCompletedDays] = useState([])
+  const [workoutState, setWorkoutState] = useState({
+    dayIndex: 0,
+    exerciseIndex: 0,
+    setIndex: 0
+  })
 
   const updateUser = (fields) => setUser(prev => ({ ...prev, ...fields }))
   const goNext = () => setStep(s => s + 1)
   const goTo = (s) => setScreen(s)
 
   useEffect(() => {
-    if (plan) {
-      saveState({ user, plan, completedDays })
+    async function loadUserData() {
+      if (!currentUser) {
+        setDataLoaded(false)
+        return
+      }
+
+      setDataLoading(true)
+
+      try {
+        const docRef = doc(db, 'users', currentUser.uid, 'bodymapData', 'main')
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          
+
+          setUser(data.user || INITIAL_USER)
+          setPlan(data.plan || null)
+          setCompletedDays(data.completedDays || [])
+          console.log("========== FIRESTORE ==========")
+          console.log(JSON.stringify(data, null, 2))
+          console.table(data.user)
+          console.log("===============================")
+          setStep(1)
+
+          if (data.plan) {
+            setScreen('home')
+          } else {
+            setScreen('onboarding')
+          }
+        } else {
+          setUser(INITIAL_USER)
+          setPlan(null)
+          setCompletedDays([])
+          setStep(1)
+          setScreen('onboarding')
+        }
+
+        setDataLoaded(true)
+      } catch (err) {
+        console.error('Fehler beim Laden:', err)
+      } finally {
+        setDataLoading(false)
+      }
     }
-  }, [user, plan, completedDays])
+
+    loadUserData()
+  }, [currentUser])
+
+  useEffect(() => {
+    async function saveUserData() {
+      if (!currentUser || !dataLoaded) return
+
+      await setDoc(
+        doc(db, 'users', currentUser.uid, 'bodymapData', 'main'),
+        {
+          user,
+          plan,
+          completedDays
+        },
+        { merge: true }
+      )
+    }
+
+    if (plan) {
+      saveUserData()
+    }
+  }, [currentUser, dataLoaded, user, plan, completedDays])
+
+  if (authLoading) {
+    return <p style={{ padding: 24 }}>Chargement...</p>
+  }
+
+  if (!currentUser) {
+    return <AuthPage />
+  }
+
+  if (dataLoading || !dataLoaded) {
+    return <LoadingScreen />
+  }
 
   const handleCreatePlan = async () => {
     setScreen('loading')
+
     try {
       const generatedPlan = await generatePlan(user)
+
       setPlan(generatedPlan)
       setCompletedDays([])
+
+      await setDoc(
+        doc(db, 'users', currentUser.uid, 'bodymapData', 'main'),
+        {
+          user,
+          plan: generatedPlan,
+          completedDays: []
+        },
+        { merge: true }
+      )
+
       setScreen('home')
     } catch (err) {
       console.error('Fehler:', err)
@@ -70,42 +158,71 @@ export default function App() {
     }
   }
 
-  const handleReset = () => {
-    localStorage.removeItem('bodymap_state')
+  const handleReset = async () => {
     setUser(INITIAL_USER)
     setPlan(null)
     setCompletedDays([])
     setStep(1)
     setScreen('onboarding')
+
+    await setDoc(
+      doc(db, 'users', currentUser.uid, 'bodymapData', 'main'),
+      {
+        user: INITIAL_USER,
+        plan: null,
+        completedDays: []
+      },
+      { merge: true }
+    )
   }
 
-  const showNav = ['home', 'dashboard', 'plan'].includes(screen)
+  const showNav = ['home', 'dashboard', 'plan', 'profile'].includes(screen)
 
   return (
     <div className="app-container">
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {screen === 'onboarding' && (
           <OnboardingScreen
-            step={step} user={user} updateUser={updateUser}
-            goNext={goNext} onFinish={handleCreatePlan}
+            step={step}
+            user={user}
+            updateUser={updateUser}
+            goNext={goNext}
+            onFinish={handleCreatePlan}
           />
         )}
+
         {screen === 'loading' && <LoadingScreen />}
+
         {screen === 'home' && (
           <HomeScreen
-            user={user} plan={plan} goTo={goTo}
+            user={user}
+            plan={plan}
+            goTo={goTo}
             setWorkoutState={setWorkoutState}
             completedDays={completedDays}
             onReset={handleReset}
           />
         )}
+
         {screen === 'dashboard' && (
           <DashboardScreen user={user} plan={plan} goTo={goTo} />
         )}
+
         {screen === 'plan' && <PlanScreen plan={plan} goTo={goTo} />}
+
+        {screen === 'profile' && (
+          <ProfileScreen
+            user={user}
+            updateUser={updateUser}
+            currentUser={currentUser}
+            onRecreatePlan={handleCreatePlan}
+          />
+        )}
+
         {screen === 'workout' && (
           <WorkoutScreen
-            plan={plan} workoutState={workoutState}
+            plan={plan}
+            workoutState={workoutState}
             setWorkoutState={setWorkoutState}
             completedDays={completedDays}
             setCompletedDays={setCompletedDays}
@@ -118,12 +235,21 @@ export default function App() {
         <div style={{ borderTop: `0.5px solid ${T.border}`, background: '#fff', flexShrink: 0 }}>
           <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex' }}>
             {NAV_ITEMS.map(item => (
-              <button key={item.id} onClick={() => goTo(item.id)} style={{
-                flex: 1, padding: '12px 0 10px', background: 'none', border: 'none',
-                cursor: 'pointer', display: 'flex', flexDirection: 'column',
-                alignItems: 'center', gap: 4
-              }}>
-                <span style={{ fontSize: 22 }}>{item.icon}</span>
+              <button
+                key={item.id}
+                onClick={() => goTo(item.id)}
+                style={{
+                  flex: 1,
+                  padding: '12px 0 10px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 4
+                }}
+              >
                 <span style={{
                   fontSize: 11,
                   fontWeight: screen === item.id ? 600 : 400,
@@ -131,6 +257,7 @@ export default function App() {
                 }}>
                   {item.label}
                 </span>
+
                 {screen === item.id && (
                   <div style={{ width: 20, height: 3, borderRadius: 2, background: T.primary }} />
                 )}
