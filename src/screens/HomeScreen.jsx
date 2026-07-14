@@ -27,7 +27,7 @@ export default function HomeScreen({ user, plan, goTo, setWorkoutState, complete
             <div style={{ fontSize: 15, color: T.textMuted, marginTop: 6 }}>
               <span style={{ fontSize: 22, fontWeight: 700, color: T.primary }}>
                 {completedDays.length}
-              </span> Trainingstage diese Woche 🔥
+              </span> Trainingstage diese Woche
             </div>
           </div>
           <button onClick={onReset} style={{
@@ -46,7 +46,12 @@ export default function HomeScreen({ user, plan, goTo, setWorkoutState, complete
         {/* Today Card */}
         {allDone ? (
           <div style={{ background: T.primary, borderRadius: T.radiusLg, padding: 28, marginBottom: 24 }}>
-            <div style={{ fontSize: 36, marginBottom: 10 }}>🎉</div>
+            <div style={{
+              width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.18)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14
+            }}>
+              <span style={{ color: '#fff', fontSize: 20, fontWeight: 700 }}>✓</span>
+            </div>
             <div style={{ fontSize: 22, fontWeight: 700, color: '#fff' }}>Woche abgeschlossen!</div>
             <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', marginTop: 6 }}>
               Alle {plan.days.length} Einheiten erledigt. Gute Erholung!
@@ -156,7 +161,14 @@ export default function HomeScreen({ user, plan, goTo, setWorkoutState, complete
                       {day.exercises.slice(0, 3).map(e => e.name).join(' · ')}
                     </div>
                   </div>
-                  {isDone && <div style={{ fontSize: 20 }}>✅</div>}
+                  {isDone && (
+                    <div style={{
+                      width: 20, height: 20, borderRadius: '50%', background: T.primary,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    }}>
+                      <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>✓</span>
+                    </div>
+                  )}
                 </div>
                 <span style={{
                   display: 'inline-block', marginTop: 10, fontSize: 11,
