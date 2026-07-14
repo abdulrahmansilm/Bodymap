@@ -14,6 +14,12 @@ export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) 
   const totalEx = day.exercises.length
   const pct = (workoutState.exerciseIndex / totalEx) * 100
 
+  // Immer KI Instructions benutzen
+  const hasAiInstructions = ex.instructions && ex.instructions.length > 0
+  const instructions = hasAiInstructions ? ex.instructions : null
+  const instructionSource = 'KI-Tipp'
+  const hasDbInstructions = false
+
   useEffect(() => {
     setExerciseData(null)
     setShowInfo(false)
@@ -54,9 +60,15 @@ export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) 
           <div style={{ height: 4, background: T.primary, borderRadius: 2, width: `${pct}%`, transition: 'width 0.4s' }} />
         </div>
 
-        <div style={{ background: T.primaryTint, borderRadius: T.radiusLg, height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 28, position: 'relative' }}>
-          <IconDumbbell color={T.primary} size={56} />
-          <div style={{ fontSize: 15, fontWeight: 600, color: T.primary, marginTop: 10 }}>{ex.name}</div>
+        <div style={{ background: T.primaryTint, borderRadius: T.radiusLg, height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
+          {exerciseData?.gifUrl ? (
+            <img src={exerciseData.gifUrl} alt={ex.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          ) : (
+            <>
+              <IconDumbbell color={T.primary} size={56} />
+              <div style={{ fontSize: 15, fontWeight: 600, color: T.primary, marginTop: 10 }}>{ex.name}</div>
+            </>
+          )}
           {exerciseData && (
             <>
               <div style={{ position: 'absolute', bottom: 12, left: 14, fontSize: 12, background: T.primary, borderRadius: 6, padding: '3px 10px', color: '#fff', fontWeight: 600 }}>{exerciseData.equipment}</div>
@@ -90,18 +102,21 @@ export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) 
           </div>
         )}
 
-        {exerciseData && exerciseData.instructions.length > 0 && (
+        {instructions && !hasDbInstructions && (
           <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.textSecondary, marginBottom: 12 }}>
-              Ausführung — Schritt {currentStep + 1} von {exerciseData.instructions.length}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: T.textSecondary }}>
+                Ausführung — Schritt {currentStep + 1} von {instructions.length}
+              </div>
+              <span style={{ fontSize: 11, fontWeight: 600, color: T.primary, background: T.primaryTint, borderRadius: 6, padding: '2px 8px' }}>{instructionSource}</span>
             </div>
             <div style={{ background: T.primaryTint, borderRadius: T.radiusMd, padding: '16px 18px', fontSize: 15, color: T.textSecondary, lineHeight: 1.7, marginBottom: 10 }}>
-              {exerciseData.instructions[currentStep]}
+              {instructions[currentStep]}
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setCurrentStep(s => Math.max(0, s - 1))} disabled={currentStep === 0}
                 style={{ flex: 1, padding: '12px 0', background: '#fff', border: `1px solid ${T.border}`, borderRadius: T.radiusSm, fontSize: 14, color: currentStep === 0 ? T.textMuted : T.textSecondary, fontFamily: 'inherit', cursor: currentStep === 0 ? 'not-allowed' : 'pointer', fontWeight: 500 }}>← Zurück</button>
-              <button onClick={() => setCurrentStep(s => Math.min(exerciseData.instructions.length - 1, s + 1))} disabled={currentStep === exerciseData.instructions.length - 1}
+              <button onClick={() => setCurrentStep(s => Math.min(instructions.length - 1, s + 1))} disabled={currentStep === instructions.length - 1}
                 style={{ flex: 1, padding: '12px 0', background: '#fff', border: `1px solid ${T.border}`, borderRadius: T.radiusSm, fontSize: 14, color: T.textSecondary, fontFamily: 'inherit', cursor: 'pointer', fontWeight: 500 }}>Weiter →</button>
             </div>
           </div>
