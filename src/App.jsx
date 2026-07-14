@@ -13,6 +13,7 @@ import WorkoutScreen from './screens/WorkoutScreen'
 import DashboardScreen from './screens/DashboardScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import { T } from './tokens'
+import { IconHome, IconChart, IconList, IconUser } from './components/Icons'
 
 const INITIAL_USER = {
   name: '', age: 22, height: 178, weight: 74, gender: '',
@@ -22,10 +23,10 @@ const INITIAL_USER = {
 }
 
 const NAV_ITEMS = [
-  { id: 'home', label: 'Home' },
-  { id: 'dashboard', label: 'Stats' },
-  { id: 'plan', label: 'Plan' },
-  { id: 'profile', label: 'Du' },
+  { id: 'home', label: 'Home', Icon: IconHome },
+  { id: 'dashboard', label: 'Stats', Icon: IconChart },
+  { id: 'plan', label: 'Plan', Icon: IconList },
+  { id: 'profile', label: 'Du', Icon: IconUser },
 ]
 
 export default function App() {
@@ -47,6 +48,7 @@ export default function App() {
 
   const updateUser = (fields) => setUser(prev => ({ ...prev, ...fields }))
   const goNext = () => setStep(s => s + 1)
+  const goBack = () => setStep(s => Math.max(1, s - 1))
   const goTo = (s) => setScreen(s)
 
   useEffect(() => {
@@ -64,15 +66,10 @@ export default function App() {
 
         if (docSnap.exists()) {
           const data = docSnap.data()
-          
 
           setUser(data.user || INITIAL_USER)
           setPlan(data.plan || null)
           setCompletedDays(data.completedDays || [])
-          console.log("========== FIRESTORE ==========")
-          console.log(JSON.stringify(data, null, 2))
-          console.table(data.user)
-          console.log("===============================")
           setStep(1)
 
           if (data.plan) {
@@ -187,6 +184,7 @@ export default function App() {
             user={user}
             updateUser={updateUser}
             goNext={goNext}
+            goBack={goBack}
             onFinish={handleCreatePlan}
           />
         )}
@@ -250,6 +248,7 @@ export default function App() {
                   gap: 4
                 }}
               >
+                <item.Icon color={screen === item.id ? T.primary : T.textMuted} size={22} />
                 <span style={{
                   fontSize: 11,
                   fontWeight: screen === item.id ? 600 : 400,
@@ -257,7 +256,6 @@ export default function App() {
                 }}>
                   {item.label}
                 </span>
-
                 {screen === item.id && (
                   <div style={{ width: 20, height: 3, borderRadius: 2, background: T.primary }} />
                 )}

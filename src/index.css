@@ -1,5 +1,5 @@
 :root {
-  --primary: #1B4332;
+  --primary: #00B4D8;
   --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
 }
 
@@ -7,7 +7,7 @@
 
 body {
   font-family: var(--font);
-  background: #F4F6F3;
+  background: #F8FAFC;
   min-height: 100vh;
 }
 
@@ -16,4 +16,43 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  background: #E5E7EB;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0,180,216,0.35);
+  cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0,180,216,0.35);
+  cursor: pointer;
+}
+
+.onb-num-input::-webkit-outer-spin-button,
+.onb-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.onb-num-input {
+  -moz-appearance: textfield;
 }

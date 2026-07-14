@@ -1,4 +1,5 @@
 import { T } from '../tokens'
+import { WeeklyVolumeChart, MuscleGroupChart } from '../components/Charts'
 
 export default function DashboardScreen({ user, plan }) {
   if (!plan) return null
@@ -50,46 +51,15 @@ export default function DashboardScreen({ user, plan }) {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Wöchentliches Volumen</div>
-            <div style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, overflow: 'hidden' }}>
-              {plan.days.map((day, i) => {
-                const daySets = day.exercises.reduce((acc, e) => acc + e.sets, 0)
-                const pct = Math.round((daySets / totalSets) * 100)
-                return (
-                  <div key={i} style={{ padding: '14px 18px', borderBottom: i < plan.days.length - 1 ? `0.5px solid ${T.border}` : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: T.textPrimary }}>{day.label} — {day.name}</span>
-                      <span style={{ fontSize: 13, color: T.textMuted }}>{daySets} Sätze</span>
-                    </div>
-                    <div style={{ height: 8, background: T.surface2, borderRadius: 4 }}>
-                      <div style={{ height: 8, background: T.primary, borderRadius: 4, width: `${pct}%` }} />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <WeeklyVolumeChart days={plan.days} />
           </div>
 
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Muskelgruppen</div>
-            <div style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, overflow: 'hidden' }}>
-              {Object.entries(muscleCounts).sort((a, b) => b[1] - a[1]).map(([muscle, count], i, arr) => {
-                const pct = Math.round((count / arr[0][1]) * 100)
-                return (
-                  <div key={muscle} style={{ padding: '14px 18px', borderBottom: i < arr.length - 1 ? `0.5px solid ${T.border}` : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: T.textPrimary }}>{muscle}</span>
-                      <span style={{ fontSize: 13, color: T.textMuted }}>{count} Übungen</span>
-                    </div>
-                    <div style={{ height: 8, background: T.surface2, borderRadius: 4 }}>
-                      <div style={{ height: 8, background: T.primaryLight, borderRadius: 4, width: `${pct}%` }} />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <MuscleGroupChart muscleCounts={muscleCounts} />
           </div>
         </div>
 

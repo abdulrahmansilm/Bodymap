@@ -7,22 +7,23 @@ export default function Step1Name({ user, updateUser, goNext }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: '40px 24px 32px' }}>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 32, fontWeight: 700, color: T.textPrimary, lineHeight: 1.2, marginBottom: 10 }}>
+        <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary, lineHeight: 1.2, marginBottom: 6 }}>
           Wie sollen wir dich nennen?
         </div>
-        <div style={{ fontSize: 16, color: T.textMuted, marginBottom: 40, lineHeight: 1.6 }}>
+        <div style={{ fontSize: 14, color: T.textMuted, marginBottom: 28, lineHeight: 1.5 }}>
           Vorname, Spitzname — ganz wie du magst.
         </div>
         <input
-          type="text" placeholder="Dein Name" value={val} autoFocus
+          type="text" placeholder="Dein Name …" value={val} autoFocus
           onChange={e => setVal(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && val.trim() && handleNext()}
           style={{
-            width: '100%', padding: '16px 18px', fontSize: 18,
+            width: '100%', padding: '15px 18px', fontSize: 17,
             border: `2px solid ${val ? T.primary : T.border}`,
-            borderRadius: T.radiusMd, background: T.surface1,
+            borderRadius: T.radiusMd, background: '#fff',
             color: T.textPrimary, outline: 'none', fontFamily: 'inherit',
-            transition: 'border-color 0.2s'
+            transition: 'all 0.2s',
+            boxShadow: val ? '0 0 0 4px rgba(0,180,216,0.12)' : 'none',
           }}
         />
       </div>

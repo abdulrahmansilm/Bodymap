@@ -8,7 +8,7 @@ import Step6Schedule from '../components/onboarding/Step6Schedule'
 import Step7Sport from '../components/onboarding/Step7Sport'
 import Step8Injuries from '../components/onboarding/Step8Injuries'
 
-export default function OnboardingScreen({ step, user, updateUser, goNext, onFinish }) {
+export default function OnboardingScreen({ step, user, updateUser, goNext, goBack, onFinish }) {
   const pct = (step / 8) * 100
   const steps = {
     1: <Step1Name user={user} updateUser={updateUser} goNext={goNext} />,
@@ -22,12 +22,18 @@ export default function OnboardingScreen({ step, user, updateUser, goNext, onFin
   }
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#fff' }}>
-      <div style={{ maxWidth: 680, width: '100%', margin: '0 auto', padding: '48px 24px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-          <span style={{ fontSize: 13, color: T.textMuted, fontWeight: 500 }}>Schritt {step} von 8</span>
-          <span style={{ fontSize: 13, color: T.primary, fontWeight: 600 }}>{Math.round(pct)}%</span>
-        </div>
-        <div style={{ height: 4, background: T.surface2, borderRadius: 2 }}>
+      <div style={{ maxWidth: 680, width: '100%', margin: '0 auto', padding: '20px 24px 0', flexShrink: 0 }}>
+        {step > 1 ? (
+          <button onClick={goBack} style={{
+            background: 'none', border: 'none', padding: 0, marginBottom: 12,
+            fontSize: 15, fontWeight: 600, color: T.textMuted,
+            fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+          }}>← Zurück</button>
+        ) : (
+          <div style={{ height: 27 }} />
+        )}
+        <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 6, fontWeight: 500 }}>Schritt {step} von 8</div>
+        <div style={{ height: 4, background: T.border, borderRadius: 2 }}>
           <div style={{ height: 4, background: T.primary, borderRadius: 2, width: `${pct}%`, transition: 'width 0.4s ease' }} />
         </div>
       </div>
