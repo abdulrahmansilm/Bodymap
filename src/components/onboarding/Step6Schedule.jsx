@@ -1,5 +1,6 @@
 import { T, btn, circleOpt } from '../../tokens'
 
+// Onboarding Schritt 6: Trainingstage, Dauer und Ort auswählen
 const LOCATIONS = ['Zuhause (ohne Geräte)', 'Zuhause (mit Hanteln)', 'Fitnessstudio']
 
 export default function Step6Schedule({ user, updateUser, goNext }) {

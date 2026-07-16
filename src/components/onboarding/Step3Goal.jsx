@@ -1,5 +1,6 @@
 import { T, btn, card } from '../../tokens'
 
+// Onboarding Schritt 3: Trainingsziel auswählen
 const GOALS = [
   { val: 'muscle', title: 'Muskeln aufbauen', sub: 'Stärker und definiert werden' },
   { val: 'lose', title: 'Abnehmen', sub: 'Fett reduzieren, schlanker werden' },

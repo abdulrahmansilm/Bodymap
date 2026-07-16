@@ -77,21 +77,21 @@ src/
 ├── AuthContext.jsx     # Auth-State global verfügbar machen
 └── App.jsx            # Einstiegspunkt / Screen-Routing
 ```
-Code-Splitting erfolgt aktuell nicht (kein `React.lazy`/dynamische Imports) – bei
-wachsendem Funktionsumfang wäre das für Screens wie `WorkoutScreen` oder `DashboardScreen`
-ein sinnvoller nächster Schritt, um die Bundle-Größe zu reduzieren.
+
 
 ## Release Notes
 
 | Datum      | Änderung                                                              | Verantwortliche(r)         |
 |------------|------------------------------------------------------------------------|-----------------------------|
-| 2026-06-01 | Projekt initialisiert                                                  | kreisslsync                 |
-| 2026-06-27 | Projektstruktur, HomeScreen, PlanScreen                                | kreisslsync                 |
-| 2026-06-28 | Projektsetup, Design System, API-Anbindung, Onboarding Schritte 1–4    | zakaria-ig                  |
-| 2026-06-28 | Workout-Modus: Übersicht, aktive Übung, Abschluss-Screen                | Admin (Abdellah)            |
-| 2026-07-08 | Vollständige App: Onboarding, Workout, Dashboard, KI-Trainingsplan     | Abdellah Nabil               |
-| 2026-07-09 | Firebase-Authentifizierung, zwei neue Profil-Screens                   | Maeva Carelle Wandji Nappa   |
-| 2026-07-14 | Design-Überarbeitung: Farbschema, Onboarding-Feinschliff, Dashboard-Charts | Zakaria Imourig          |
+| 2026-06-01 | Projekt initialisiert                                                  | Abdulrahman Mahio Silm                 |
+| 2026-06-27 | Projektsetup, Design System, API-Anbindung, Onboarding Schritte 1–4                                 | Zakaria el mourig                |
+| 2026-06-28 |HomeScreen, Wochenkalender,planScreen    |Abdulrahman Mahio Silm                |
+| 2026-06-28 | OnboardingFlow Schritte 5-8,LoadingScreen,OnboardingScreen    |Maeva Carelle Wandji Nappa                |
+| 2026-06-28 | Workout-Modus: Übersicht, aktive Übung, Abschluss-Screen                |  Abdellah Nabil          |
+| 2026-07-08 | State Managment , localStorage    | kreisslsync                |
+| 2026-07-08 | DashboardScreen, KI-Trainingsplan     | Abdellah Nabil               |
+| 2026-07-09 | Firebase-Authentifizierung, zwei neue Profil-Screens                   | Maeva Carelle Wandji Nappa     |
+| 2026-07-14 | Design-Überarbeitung: Farbschema, Onboarding-Feinschliff, Dashboard-Charts | Zakaria el mourig          |
 
 ---
 

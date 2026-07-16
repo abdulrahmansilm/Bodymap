@@ -1,5 +1,6 @@
 import { T, btn } from '../../tokens'
 
+// Onboarding Schritt 7: Sportarten auswählen (optional)
 const SPORTS = ['Fußball', 'Tennis', 'Boxen', 'Basketball', 'Schwimmen', 'Radfahren', 'Laufen', 'Hockey', 'Andere']
 
 export default function Step7Sport({ user, updateUser, goNext }) {

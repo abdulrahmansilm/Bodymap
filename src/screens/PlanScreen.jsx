@@ -1,5 +1,6 @@
 import { T } from '../tokens'
 
+// Read-only Übersicht über den ganzen Trainingsplan, alle Tage und Übungen
 export default function PlanScreen({ plan, goTo }) {
   if (!plan) return null
   return (

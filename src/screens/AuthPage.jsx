@@ -7,12 +7,14 @@ import {
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { T } from '../tokens'
 
+// Login/Registrierung, nur mit Name statt E-Mail
 export default function AuthPage() {
   const [isRegister, setIsRegister] = useState(false)
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  // Firebase braucht eine E-Mail, deshalb bauen wir eine aus dem Namen
   const createFakeEmail = (username) => {
     return `${username.trim().toLowerCase().replaceAll(' ', '')}@bodymap.local`
   }

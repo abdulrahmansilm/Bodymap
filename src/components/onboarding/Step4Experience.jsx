@@ -1,5 +1,6 @@
 import { T, btn, card } from '../../tokens'
 
+// Onboarding Schritt 4: Trainingserfahrung auswählen
 const EXPS = [
   { val: 'beginner', title: 'Kompletter Anfänger', sub: 'Ich fange gerade erst an' },
   { val: 'returning', title: 'Wiedereinsteiger', sub: 'War aktiv, längere Pause' },
