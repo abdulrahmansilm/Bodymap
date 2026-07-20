@@ -1,6 +1,7 @@
 import { T, btn } from '../../tokens'
 import { IconCheckCircle } from '../Icons'
 
+// Abschluss-Screen nach dem Training, zeigt Fortschritt und nächste Einheit
 export default function WorkoutDone({ day, plan, completedDays, onBack }) {
   const nextDay = plan.days.find(d => !completedDays.includes(d.label) && d.label !== day.label)
   return (

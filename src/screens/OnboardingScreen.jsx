@@ -8,6 +8,7 @@ import Step6Schedule from '../components/onboarding/Step6Schedule'
 import Step7Sport from '../components/onboarding/Step7Sport'
 import Step8Injuries from '../components/onboarding/Step8Injuries'
 
+// Rahmen für die 8 Onboarding-Schritte inkl. Fortschrittsbalken und Zurück-Button
 export default function OnboardingScreen({ step, user, updateUser, goNext, goBack, onFinish }) {
   const pct = (step / 8) * 100
   const steps = {

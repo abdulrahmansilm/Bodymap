@@ -3,6 +3,7 @@ import { T, btn } from '../../tokens'
 import { fetchExerciseData } from '../../utils/api'
 import { IconDumbbell } from '../Icons'
 
+// Zeigt die aktuelle Übung mit Timer, Sätzen und Ausführungs-Anleitung
 export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) {
   const [showInfo, setShowInfo] = useState(false)
   const [exerciseData, setExerciseData] = useState(null)
@@ -20,6 +21,7 @@ export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) 
   const instructionSource = 'KI-Tipp'
   const hasDbInstructions = false
 
+  // setzt alles zurück und lädt Übungsdaten (GIF, Equipment) bei jeder neuen Übung
   useEffect(() => {
     setExerciseData(null)
     setShowInfo(false)
@@ -29,6 +31,7 @@ export default function WorkoutActive({ day, workoutState, onSetDone, onSkip }) 
     fetchExerciseData(ex.searchTerm).then(data => setExerciseData(data))
   }, [workoutState.exerciseIndex])
 
+  // räumt den Pausen-Timer beim Verlassen der Komponente auf
   useEffect(() => {
     return () => { if (timerInterval) clearInterval(timerInterval) }
   }, [timerInterval])

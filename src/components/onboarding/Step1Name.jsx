@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { T, btn } from '../../tokens'
 
+// Onboarding Schritt 1: Name eingeben
 export default function Step1Name({ user, updateUser, goNext }) {
   const [val, setVal] = useState(user.name)
   const handleNext = () => { updateUser({ name: val.trim() }); goNext() }

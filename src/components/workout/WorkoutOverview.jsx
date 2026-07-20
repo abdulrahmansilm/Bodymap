@@ -1,5 +1,6 @@
 import { T, btn } from '../../tokens'
 
+// Zeigt alle Übungen des Tages vor Trainingsstart
 export default function WorkoutOverview({ day, onStart, onBack }) {
   return (
     <div style={{ background: '#fff', minHeight: '100vh' }}>

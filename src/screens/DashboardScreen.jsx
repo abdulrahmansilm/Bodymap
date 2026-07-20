@@ -1,11 +1,13 @@
 import { T } from '../tokens'
 import { WeeklyVolumeChart, MuscleGroupChart } from '../components/Charts'
 
+// Übersicht mit Stats, Körperdaten/BMI und Charts, basiert komplett auf dem generierten Plan
 export default function DashboardScreen({ user, plan }) {
   if (!plan) return null
 
   const allExercises = plan.days.flatMap(d => d.exercises)
   const allMuscles = allExercises.map(e => e.muscle)
+  // zählt wie oft jede Muskelgruppe im Plan vorkommt, fürs Chart
   const muscleCounts = allMuscles.reduce((acc, m) => { acc[m] = (acc[m] || 0) + 1; return acc }, {})
   const totalSets = allExercises.reduce((acc, e) => acc + e.sets, 0)
   const bmi = (user.weight / ((user.height / 100) ** 2)).toFixed(1)
