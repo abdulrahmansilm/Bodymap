@@ -6,6 +6,7 @@ import WorkoutDone from '../components/workout/WorkoutDone'
 // Steuert die 3 Phasen des Trainings: Übersicht -> aktive Übung -> fertig
 export default function WorkoutScreen({ plan, workoutState, setWorkoutState, completedDays, setCompletedDays, goTo }) {
   const [phase, setPhase] = useState('overview')
+  const [completedSets, setCompletedSets] = useState(0)
 
   const day = plan.days[workoutState.dayIndex]
 
@@ -17,6 +18,7 @@ export default function WorkoutScreen({ plan, workoutState, setWorkoutState, com
   const handleSetDone = () => {
     const ex = day.exercises[workoutState.exerciseIndex]
     const nextSet = workoutState.setIndex + 1
+    setCompletedSets(prev => prev + 1)
     if (nextSet >= ex.sets) {
       const nextEx = workoutState.exerciseIndex + 1
       if (nextEx >= day.exercises.length) {
@@ -66,6 +68,7 @@ export default function WorkoutScreen({ plan, workoutState, setWorkoutState, com
       day={day}
       plan={plan}
       completedDays={completedDays}
+      completedSets={completedSets}
       onBack={handleBack}
     />
   )

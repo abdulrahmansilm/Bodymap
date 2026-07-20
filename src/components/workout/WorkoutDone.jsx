@@ -1,9 +1,23 @@
+import { useEffect, useRef } from 'react'
 import { T, btn } from '../../tokens'
 import { IconCheckCircle } from '../Icons'
 
 // Abschluss-Screen nach dem Training, zeigt Fortschritt und nächste Einheit
-export default function WorkoutDone({ day, plan, completedDays, onBack }) {
+export default function WorkoutDone({ day, plan, completedDays, completedSets, onBack }) {
   const nextDay = plan.days.find(d => !completedDays.includes(d.label) && d.label !== day.label)
+  const logged = useRef(false)
+
+  // Trägt diese absolvierte Einheit einmalig in den lokalen Trainingsverlauf ein
+  useEffect(() => {
+    if (logged.current) return
+    logged.current = true
+    const raw = localStorage.getItem('sessionHistory')
+    const history = raw ? JSON.parse(raw) : []
+    const now = new Date()
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    const entry = { date, dayName: day.name, completedSets }
+    localStorage.setItem('sessionHistory', JSON.stringify([...history, entry]))
+  }, [])
   return (
     <div style={{ background: '#fff', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ maxWidth: 480, width: '100%', padding: '40px 24px', textAlign: 'center' }}>
