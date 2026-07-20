@@ -88,7 +88,7 @@ src/
 | 2026-06-28 |HomeScreen, Wochenkalender,planScreen    |Abdulrahman Mahio Silm                |
 | 2026-06-28 | OnboardingFlow Schritte 5-8,LoadingScreen,OnboardingScreen    |Maeva Carelle Wandji Nappa                |
 | 2026-06-28 | Workout-Modus: Übersicht, aktive Übung, Abschluss-Screen                |  Abdellah Nabil          |
-| 2026-07-08 | State Managment , localStorage    | kreisslsync                |
+| 2026-07-08 | State Managment , localStorage    | Khusein Al Sharida                 |
 | 2026-07-08 | DashboardScreen, KI-Trainingsplan     | Abdellah Nabil               |
 | 2026-07-09 | Firebase-Authentifizierung, zwei neue Profil-Screens                   | Maeva Carelle Wandji Nappa     |
 | 2026-07-14 | Design-Überarbeitung: Farbschema, Onboarding-Feinschliff, Dashboard-Charts | Zakaria el mourig          |
