@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Firebase Projekt-Config (Auth + Firestore fürs Speichern der Userdaten)
 const firebaseConfig = {
   apiKey: "AIzaSyD6iqVDxXM9d7P2BmEFFSECyrrh_aUYXr4",
   authDomain: "bodymap-6daa4.firebaseapp.com",

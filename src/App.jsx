@@ -52,6 +52,7 @@ export default function App() {
   const goBack = () => setStep(s => Math.max(1, s - 1))
   const goTo = (s) => setScreen(s)
 
+  // Daten aus Firestore laden wenn sich der eingeloggte User ändert
   useEffect(() => {
     async function loadUserData() {
       if (!currentUser) {
@@ -99,6 +100,7 @@ export default function App() {
     loadUserData()
   }, [currentUser])
 
+  // Speichert User, Plan und Fortschritt automatisch in Firestore sobald sich was ändert
   useEffect(() => {
     async function saveUserData() {
       if (!currentUser || !dataLoaded) return
@@ -132,6 +134,7 @@ export default function App() {
     return <LoadingScreen />
   }
 
+  // Ruft die KI-API auf und speichert den neuen Trainingsplan
   const handleCreatePlan = async () => {
     setScreen('loading')
 
@@ -159,6 +162,7 @@ export default function App() {
     }
   }
 
+  // Setzt Profil und Plan zurück auf den Anfangszustand
   const handleReset = async () => {
     setUser(INITIAL_USER)
     setPlan(null)

@@ -3,6 +3,7 @@ import { signOut, updatePassword } from 'firebase/auth'
 import { auth } from '../firebase'
 import { T } from '../tokens'
 
+// Profildaten bearbeiten, Plan neu generieren, Passwort ändern und Logout
 export default function ProfileScreen({ user, updateUser, currentUser, onRecreatePlan, onWeightChange }) {
   const [newPassword, setNewPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -55,6 +56,7 @@ export default function ProfileScreen({ user, updateUser, currentUser, onRecreat
     updateUser({ [field]: value ? [value] : [] })
   }
 
+  // Ändert das Passwort beim eingeloggten Firebase-User
   const handlePasswordChange = async () => {
     setMessage('')
 

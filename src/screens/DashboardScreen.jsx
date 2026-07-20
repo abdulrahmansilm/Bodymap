@@ -1,6 +1,7 @@
 import { T } from '../tokens'
 import { CompletedSetsChart, WeightTrendChart } from '../components/Charts'
 
+// Übersicht mit Stats, Körperdaten/BMI und Charts, basiert komplett auf dem generierten Plan
 export default function DashboardScreen({ user, plan, completedDays, weightHistory }) {
   if (!plan) return null
 

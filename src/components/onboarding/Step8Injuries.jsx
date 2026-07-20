@@ -1,6 +1,7 @@
 import { T, btn } from '../../tokens'
 import { IconLock } from '../Icons'
 
+// Onboarding Schritt 8: Verletzungen/Einschränkungen auswählen, letzter Schritt
 const INJURIES = ['Keine','Knie','Rücken','Handgelenk','Sprunggelenk','Schulter']
 
 export default function Step8Injuries({ user, updateUser, onFinish }) {

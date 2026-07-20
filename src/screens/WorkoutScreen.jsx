@@ -3,6 +3,7 @@ import WorkoutOverview from '../components/workout/WorkoutOverview'
 import WorkoutActive from '../components/workout/WorkoutActive'
 import WorkoutDone from '../components/workout/WorkoutDone'
 
+// Steuert die 3 Phasen des Trainings: Übersicht -> aktive Übung -> fertig
 export default function WorkoutScreen({ plan, workoutState, setWorkoutState, completedDays, setCompletedDays, goTo }) {
   const [phase, setPhase] = useState('overview')
 

@@ -1,8 +1,10 @@
 import { T } from '../tokens'
 
+// Startbildschirm: nächste Trainingseinheit, Wochenübersicht und alle Plan-Tage
 export default function HomeScreen({ user, plan, goTo, setWorkoutState, completedDays, onReset }) {
   if (!plan) return <div style={{ padding: 24 }}>Kein Plan vorhanden.</div>
 
+  // erster Tag, der noch nicht abgehakt wurde
   const nextDayIndex = plan.days.findIndex(d => !completedDays.includes(d.label))
   const todayPlan = nextDayIndex !== -1 ? plan.days[nextDayIndex] : null
   const allDone = nextDayIndex === -1

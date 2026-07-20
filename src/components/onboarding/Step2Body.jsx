@@ -1,5 +1,6 @@
 import { T, btn } from '../../tokens'
 
+// Onboarding Schritt 2: Alter, Größe, Gewicht, Geschlecht
 export default function Step2Body({ user, updateUser, goNext }) {
   const Slider = ({ label, field, min, max, unit }) => {
     const value = user[field]

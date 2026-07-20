@@ -1,5 +1,6 @@
 import { T } from '../tokens'
 
+// Ladeanzeige während App-Daten oder der KI-Plan geladen werden
 export default function LoadingScreen() {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, textAlign: 'center', background: '#fff', minHeight: '80vh' }}>

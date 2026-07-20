@@ -1,5 +1,6 @@
 import { T, btn, card } from '../../tokens'
 
+// Onboarding Schritt 5: Alltag/Lifestyle auswählen
 const LIVES = [
   { val: 'sitting', title: 'Meistens sitzend', sub: 'Student, Bürojob, Home Office' },
   { val: 'mixed', title: 'Gemischt', sub: 'Mal sitzend, mal aktiv' },

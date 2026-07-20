@@ -1,3 +1,4 @@
+// Schickt das Userprofil an die KI und bekommt den fertigen Trainingsplan als JSON zurück
 export async function generatePlan(user) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -136,6 +137,7 @@ Antworte NUR mit validem JSON, kein Text davor oder danach. Die Felder sets, rep
 
 const EXERCISE_CACHE = {}
 
+// Holt Zusatzinfos (Bild, Anleitung, Equipment) zu einer Übung, cached pro Suchbegriff
 export async function fetchExerciseData(searchTerm) {
   if (EXERCISE_CACHE[searchTerm]) return EXERCISE_CACHE[searchTerm]
   try {
