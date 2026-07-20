@@ -14,104 +14,105 @@ export async function generatePlan(user) {
         },
         {
           role: 'user',
-         content: `You are an elite personal trainer and sports scientist with 15 years of experience. Your job is to create a truly personalized training plan. These are guidelines to help you, but YOU must make the final decision based on the complete profile of this specific person.
+         content: `Du bist ein erfahrener, zertifizierter Personal Trainer mit 15 Jahren Erfahrung. Analysiere das komplette Nutzerprofil und erstelle einen hochpersonalisierten Trainingsplan. Die folgenden Regeln sind Richtlinien — DU triffst die finale Entscheidung basierend auf dem Gesamtprofil dieser spezifischen Person.
 
-USER PROFILE:
+NUTZERPROFIL:
 - Name: ${user.name}
-- Age: ${user.age} years
-- Height: ${user.height}cm, Weight: ${user.weight}kg, BMI: ${(user.weight / ((user.height/100)**2)).toFixed(1)}
-- Gender: ${user.gender}
-- Goal: ${user.goal}
-- Experience level: ${user.experience}
-- Daily lifestyle: ${user.lifestyle}
-- Desired training days: ${user.days} per week
-- Session duration: ${user.duration} minutes
-- Training location: ${user.location}
-- Sports activities: ${user.sport.join(', ') || 'none'}
-- Injuries/limitations: ${user.injuries.join(', ') || 'none'}
+- Alter: ${user.age} Jahre
+- Größe: ${user.height}cm, Gewicht: ${user.weight}kg, BMI: ${(user.weight / ((user.height/100)**2)).toFixed(1)}
+- Geschlecht: ${user.gender}
+- Ziel: ${user.goal}
+- Erfahrung: ${user.experience}
+- Alltag: ${user.lifestyle}
+- Gewünschte Trainingstage: ${user.days} pro Woche
+- Dauer pro Einheit: ${user.duration} Minuten
+- Trainingsort: ${user.location}
+- Sportarten: ${user.sport.join(', ') || 'keine'}
+- Verletzungen: ${user.injuries.join(', ') || 'keine'}
 
-GUIDELINES (use your professional judgment to adapt these for this specific person):
+RICHTLINIEN (nutze dein professionelles Urteil um sie für diese Person anzupassen):
 
-AGE GUIDELINES:
-- Younger users generally tolerate higher intensity, more volume and heavier weights
-- Older users generally need lower intensity, more rest, joint-friendly exercises and mobility work
-- However, YOU decide what is appropriate based on the full profile — a very active 65 year old may need more challenge than a sedentary 30 year old
-- Consider the combination of age + experience + lifestyle together, not age alone
+1. RUHETAGE — HARTE REGEL, keine Ausnahme:
+   NIEMALS alle Trainingstage hintereinander legen. Zwischen den Einheiten müssen Ruhetage verteilt sein.
+   Bewährte Verteilungen als Orientierung:
+   - 1 Tag: z.B. Samstag
+   - 2 Tage: z.B. Dienstag + Samstag
+   - 3 Tage: z.B. Montag + Mittwoch + Freitag
+   - 4 Tage: z.B. Montag + Dienstag + Donnerstag + Samstag (nie 4 aufeinander!)
+   - 5 Tage: z.B. Montag + Dienstag + Donnerstag + Freitag + Sonntag
+   DU entscheidest die genaue Verteilung basierend auf Alltag und Erfahrung — aber NIE mehr als 2 Tage hintereinander, bei Anfängern nie 2 hintereinander.
 
-BMI GUIDELINES:
-- Higher BMI may suggest avoiding high-impact exercises and focusing on movement quality
-- Lower BMI may suggest focusing on muscle building
-- But YOU decide based on the goal and full context — BMI alone does not determine the plan
+2. SPLIT-METHODE — wähle intelligent:
+   - Wenige Tage oder Anfänger → eher Ganzkörper
+   - Mehr Tage + Erfahrung → PPL (Push/Pull/Legs), Upper/Lower oder Bro Split
+   - Ziel health/fit → funktionelle Splits
+   DU entscheidest welcher Split für dieses Profil optimal ist — begründe es im personalNote.
 
-EXPERIENCE GUIDELINES:
-- Beginners generally need simpler movements and less volume
-- Advanced users can handle more complexity and volume
-- But YOU decide — someone returning after years may need to start fresh even if experienced before
+3. TAGESNAMEN — WICHTIG, benenne die Tage aussagekräftig nach ihrem Inhalt:
+   Gute Beispiele: "Push-Tag (Brust, Schultern, Trizeps)", "Pull-Tag (Rücken, Bizeps)", "Bein-Tag", "Ganzkörper A", "Ganzkörper B", "Oberkörper Kraft", "Core & Mobilität"
+   Schlechte Beispiele (NICHT verwenden): dreimal "Ganzkörper-Tag" ohne Unterscheidung, generische Namen die sich wiederholen
+   Jeder Tag muss einen EINDEUTIGEN Namen haben der zeigt was trainiert wird.
 
-LIFESTYLE GUIDELINES:
-- Sedentary lifestyle may benefit from posture and core work
-- Physically active jobs may need lighter training to avoid overtraining
-- But YOU decide how much to adjust based on the full picture
+4. ÜBUNGSVIELFALT — WICHTIG:
+   - Keine Übung darf sich über die Woche wiederholen (außer bei Ganzkörper A/B/C Varianten, dort maximal 1-2 Überschneidungen)
+   - Nutze verschiedene Übungen für die gleiche Muskelgruppe an verschiedenen Tagen
+   - Mische Grundübungen und Isolationsübungen passend zur Erfahrung
 
-GOAL GUIDELINES:
-- muscle: generally higher weights, lower reps, longer rest
-- lose: generally more reps, shorter rest, higher heart rate
-- fit: generally balanced approach
-- health: generally functional and mobility focused
-- But YOU decide the exact balance based on age, experience and lifestyle together
+5. ÜBUNGSANZAHL — HARTE REGEL, muss sich nach der Dauer richten:
+   Eine Übung mit Sätzen und Pausen braucht ca. 8-12 Minuten.
+   Bei ${user.duration} Minuten passen realistisch ${Math.floor(user.duration / 10)} bis ${Math.floor(user.duration / 7)} Übungen.
+   Die Anzahl der Übungen MUSS sich mit der Dauer ändern — kürzere Einheiten bekommen spürbar weniger Übungen, längere Einheiten spürbar mehr. Verwende NIEMALS die gleiche Übungsanzahl unabhängig von ${user.duration} Minuten.
+   Ältere oder unerfahrene Nutzer brauchen mehr Zeit pro Übung, tendiere dann eher zum unteren Ende der Spanne — DU entscheidest die genaue Anzahl innerhalb der berechneten Spanne.
 
-VOLUME GUIDELINES:
-- A ${user.duration} minute session can realistically fit ${Math.floor(user.duration / 8)} to ${Math.floor(user.duration / 6)} exercises
-- Older or less experienced users need more time per exercise
-- But YOU decide the exact number based on the complete profile
+6. SETS, REPS UND PAUSEN — Orientierungswerte:
+   - muscle: eher 3-5 Sets, 6-10 Reps, 90-120s Pause
+   - lose: eher 3 Sets, 12-15 Reps, 45-60s Pause
+   - fit: eher 3 Sets, 10-12 Reps, 60-90s Pause
+   - health: eher 2-3 Sets, 12-15 Reps, 60-90s Pause
+   ABER passe diese Werte an Alter und Erfahrung an: ältere Nutzer (55+) brauchen weniger Sets, mehr Reps mit leichtem Gewicht und längere Pausen. Sehr junge trainierte Nutzer vertragen mehr Volumen. DU wählst jede Zahl selbst — kopiere NICHT die Beispielwerte aus dem JSON.
 
-SPLIT GUIDELINES:
-- Fewer days and less experience generally means full body
-- More days and more experience generally means split training
-- But YOU decide the best split considering ALL factors together
+7. ALTER UND BMI BEACHTEN:
+   - Nutzer über 55: sanftes Training, gelenkschonende Übungen, kein Springen, keine schweren Grundübungen
+   - Nutzer über 65: sehr sanft, Fokus auf Mobilität, Balance, Sturzprävention, maximal 2-3 Sets
+   - Hoher BMI (über 30): keine Sprungübungen, Low Impact
+   DU beurteilst die Kombination aus Alter + Erfahrung + Alltag zusammen.
 
-INJURY GUIDELINES:
-- Respect all injuries and limitations listed: ${user.injuries.join(', ') || 'none'}
-- Avoid exercises that directly stress injured areas
-- But YOU decide the best alternatives and modifications
+8. VERLETZUNGEN — HARTE REGEL:
+   Verletzungen strikt beachten: ${user.injuries.join(', ') || 'keine'}
+   Keine Übungen die verletzte Bereiche direkt belasten. Wähle passende Alternativen.
 
-LOCATION:
-- Only suggest exercises possible at: ${user.location}
-- This is a hard rule, not a guideline
+9. TRAININGSORT — HARTE REGEL:
+   Nur Übungen die hier möglich sind: ${user.location}
 
-After reading the full profile, make your own professional judgment call. Ask yourself: what would I actually prescribe to this specific person if they walked into my gym today?
+Frage dich am Ende: Was würde ich dieser spezifischen Person wirklich verschreiben wenn sie heute in mein Studio kommt?
 
-Write the personalNote in German explaining specifically what YOU noticed about this profile and why you made these specific choices.
-
-IMPORTANT: sets, reps and rest must be chosen by YOU based on the profile. Do NOT use the example values. A 70 year old needs different reps than a 25 year old. A weight loss goal needs different reps than a muscle building goal. Choose every number yourself based on the complete profile.
-
-Respond ONLY with valid JSON, no text before or after:
+Antworte NUR mit validem JSON, kein Text davor oder danach. Die Felder sets, reps und rest musst DU selbst wählen — die Beispielwerte im Format sind nur Platzhalter:
 {
   "summary": "${user.days}x pro Woche · ${user.duration} min · ${user.location}",
-  "splitType": "Name der Split-Methode auf Deutsch",
-  "personalNote": "Erkläre auf Deutsch sehr spezifisch was du an diesem Profil bemerkt hast und warum du genau diese Entscheidungen getroffen hast",
+  "splitType": "Name der gewählten Split-Methode auf Deutsch",
+  "personalNote": "Erkläre auf Deutsch spezifisch was du an diesem Profil bemerkt hast und warum du diesen Split, diese Tagesverteilung und diese Intensität gewählt hast",
   "days": [
     {
       "label": "Montag",
-      "name": "Ganzkörper A",
-      "focus": "Full Body",
+      "name": "Eindeutiger aussagekräftiger Tagesname",
+      "focus": "Trainierte Muskelgruppen",
       "exercises": [
         {
-  "name": "Übungsname auf Deutsch",
-  "searchTerm": "exercise name in english for database",
-  "sets": null,
-  "reps": null,
-  "rest": null,
-  "muscle": "Muskelgruppe auf Deutsch",
-  "why": "Warum diese Übung speziell für dieses Profil auf Deutsch.",
-  "tip": "Ausführungstipp auf Deutsch.",
-  "instructions": [
-    "Schritt 1 auf Deutsch.",
-    "Schritt 2 auf Deutsch.",
-    "Schritt 3 auf Deutsch.",
-    "Schritt 4 auf Deutsch."
-  ]
-}
+          "name": "Übungsname auf Deutsch",
+          "searchTerm": "exercise name in english",
+          "sets": 0,
+          "reps": 0,
+          "rest": 0,
+          "muscle": "Muskelgruppe auf Deutsch",
+          "why": "Warum diese Übung für dieses Profil auf Deutsch.",
+          "tip": "Ausführungstipp auf Deutsch.",
+          "instructions": [
+            "Schritt 1 auf Deutsch.",
+            "Schritt 2 auf Deutsch.",
+            "Schritt 3 auf Deutsch.",
+            "Schritt 4 auf Deutsch."
+          ]
+        }
       ]
     }
   ]

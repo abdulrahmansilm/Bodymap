@@ -1,12 +1,10 @@
 import { T } from '../tokens'
-import { WeeklyVolumeChart, MuscleGroupChart } from '../components/Charts'
+import { CompletedSetsChart, WeightTrendChart } from '../components/Charts'
 
-export default function DashboardScreen({ user, plan }) {
+export default function DashboardScreen({ user, plan, completedDays, weightHistory }) {
   if (!plan) return null
 
   const allExercises = plan.days.flatMap(d => d.exercises)
-  const allMuscles = allExercises.map(e => e.muscle)
-  const muscleCounts = allMuscles.reduce((acc, m) => { acc[m] = (acc[m] || 0) + 1; return acc }, {})
   const totalSets = allExercises.reduce((acc, e) => acc + e.sets, 0)
   const bmi = (user.weight / ((user.height / 100) ** 2)).toFixed(1)
   const bmiLabel = bmi < 18.5 ? 'Untergewicht' : bmi < 25 ? 'Normalgewicht' : bmi < 30 ? 'Übergewicht' : 'Adipositas'
@@ -53,13 +51,13 @@ export default function DashboardScreen({ user, plan }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Wöchentliches Volumen</div>
-            <WeeklyVolumeChart days={plan.days} />
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Sätze diese Woche</div>
+            <CompletedSetsChart days={plan.days} completedDays={completedDays} />
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Muskelgruppen</div>
-            <MuscleGroupChart muscleCounts={muscleCounts} />
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>Körpergewicht</div>
+            <WeightTrendChart weightHistory={weightHistory} />
           </div>
         </div>
 

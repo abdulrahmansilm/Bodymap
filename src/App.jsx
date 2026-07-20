@@ -40,6 +40,7 @@ export default function App() {
   const [user, setUser] = useState(INITIAL_USER)
   const [plan, setPlan] = useState(null)
   const [completedDays, setCompletedDays] = useState([])
+  const [weightHistory, setWeightHistory] = useState([])
   const [workoutState, setWorkoutState] = useState({
     dayIndex: 0,
     exerciseIndex: 0,
@@ -70,6 +71,7 @@ export default function App() {
           setUser(data.user || INITIAL_USER)
           setPlan(data.plan || null)
           setCompletedDays(data.completedDays || [])
+          setWeightHistory(data.weightHistory || [])
           setStep(1)
 
           if (data.plan) {
@@ -81,6 +83,7 @@ export default function App() {
           setUser(INITIAL_USER)
           setPlan(null)
           setCompletedDays([])
+          setWeightHistory([])
           setStep(1)
           setScreen('onboarding')
         }
@@ -105,7 +108,8 @@ export default function App() {
         {
           user,
           plan,
-          completedDays
+          completedDays,
+          weightHistory
         },
         { merge: true }
       )
@@ -114,7 +118,7 @@ export default function App() {
     if (plan) {
       saveUserData()
     }
-  }, [currentUser, dataLoaded, user, plan, completedDays])
+  }, [currentUser, dataLoaded, user, plan, completedDays, weightHistory])
 
   if (authLoading) {
     return <p style={{ padding: 24 }}>Chargement...</p>
@@ -159,6 +163,7 @@ export default function App() {
     setUser(INITIAL_USER)
     setPlan(null)
     setCompletedDays([])
+    setWeightHistory([])
     setStep(1)
     setScreen('onboarding')
 
@@ -167,10 +172,19 @@ export default function App() {
       {
         user: INITIAL_USER,
         plan: null,
-        completedDays: []
+        completedDays: [],
+        weightHistory: []
       },
       { merge: true }
     )
+  }
+
+  const logWeight = (weight) => {
+    const today = new Date().toISOString().slice(0, 10)
+    setWeightHistory(prev => {
+      const rest = prev.filter(entry => entry.date !== today)
+      return [...rest, { date: today, weight }].sort((a, b) => a.date.localeCompare(b.date))
+    })
   }
 
   const showNav = ['home', 'dashboard', 'plan', 'profile'].includes(screen)
@@ -203,7 +217,7 @@ export default function App() {
         )}
 
         {screen === 'dashboard' && (
-          <DashboardScreen user={user} plan={plan} goTo={goTo} />
+          <DashboardScreen user={user} plan={plan} goTo={goTo} completedDays={completedDays} weightHistory={weightHistory} />
         )}
 
         {screen === 'plan' && <PlanScreen plan={plan} goTo={goTo} />}
@@ -214,6 +228,7 @@ export default function App() {
             updateUser={updateUser}
             currentUser={currentUser}
             onRecreatePlan={handleCreatePlan}
+            onWeightChange={logWeight}
           />
         )}
 

@@ -3,7 +3,7 @@ import { signOut, updatePassword } from 'firebase/auth'
 import { auth } from '../firebase'
 import { T } from '../tokens'
 
-export default function ProfileScreen({ user, updateUser, currentUser, onRecreatePlan }) {
+export default function ProfileScreen({ user, updateUser, currentUser, onRecreatePlan, onWeightChange }) {
   const [newPassword, setNewPassword] = useState('')
   const [message, setMessage] = useState('')
 
@@ -121,7 +121,13 @@ export default function ProfileScreen({ user, updateUser, currentUser, onRecreat
           <input style={inputStyle} type="number" value={user.height || ''} onChange={(e) => updateUser({ height: Number(e.target.value) })} />
 
           <label style={labelStyle}>Gewicht</label>
-          <input style={inputStyle} type="number" value={user.weight || ''} onChange={(e) => updateUser({ weight: Number(e.target.value) })} />
+          <input
+            style={inputStyle}
+            type="number"
+            value={user.weight || ''}
+            onChange={(e) => updateUser({ weight: Number(e.target.value) })}
+            onBlur={(e) => { if (Number(e.target.value) > 0) onWeightChange(Number(e.target.value)) }}
+          />
 
           <label style={labelStyle}>Geschlecht</label>
           <select style={inputStyle} value={user.gender || 'weiblich'} onChange={(e) => updateUser({ gender: e.target.value })}>

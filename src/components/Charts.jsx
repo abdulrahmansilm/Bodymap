@@ -69,8 +69,8 @@ function DataTable({ headers, rows }) {
   )
 }
 
-// Vertical column chart — magnitude per day (e.g. weekly training volume).
-export function WeeklyVolumeChart({ days }) {
+// Vertical column chart — sets already completed per day, this week.
+export function CompletedSetsChart({ days, completedDays }) {
   const [hover, setHover] = useState(null)
   const [showTable, setShowTable] = useState(false)
 
@@ -78,7 +78,7 @@ export function WeeklyVolumeChart({ days }) {
     key: day.label,
     short: day.label.slice(0, 2),
     name: day.name,
-    value: day.exercises.reduce((a, e) => a + e.sets, 0),
+    value: completedDays.includes(day.label) ? day.exercises.reduce((a, e) => a + e.sets, 0) : 0,
   }))
   const max = Math.max(...data.map(d => d.value), 1)
   const ticks = niceTicks(max)
@@ -88,7 +88,7 @@ export function WeeklyVolumeChart({ days }) {
   if (showTable) {
     return (
       <div>
-        <DataTable headers={['Tag', 'Sätze']} rows={data.map(d => [`${d.key} — ${d.name}`, d.value])} />
+        <DataTable headers={['Tag', 'Erledigte Sätze']} rows={data.map(d => [`${d.key} — ${d.name}`, d.value])} />
         <TableToggle show={showTable} onToggle={() => setShowTable(false)} />
       </div>
     )
@@ -98,7 +98,7 @@ export function WeeklyVolumeChart({ days }) {
     <div>
       <div
         role="img"
-        aria-label={`Balkendiagramm, Trainingssätze pro Tag: ${data.map(d => `${d.key} ${d.value} Sätze`).join(', ')}.`}
+        aria-label={`Balkendiagramm, erledigte Sätze pro Tag diese Woche: ${data.map(d => `${d.key} ${d.value} Sätze`).join(', ')}.`}
         style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, padding: '18px 14px 14px', display: 'grid', gridTemplateColumns: '26px 1fr', gap: 8 }}
       >
         <div style={{ position: 'relative', height: plotHeight }}>
@@ -129,7 +129,7 @@ export function WeeklyVolumeChart({ days }) {
                         ...(i === 0 ? { left: 0 } : i === data.length - 1 ? { right: 0 } : { left: '50%', transform: 'translateX(-50%)' }),
                         background: T.textPrimary, color: '#fff', fontSize: 11, fontWeight: 600,
                         padding: '5px 9px', borderRadius: 8, whiteSpace: 'nowrap', zIndex: 2, pointerEvents: 'none',
-                      }}>{d.key} — {d.name}: {d.value} Sätze</div>
+                      }}>{d.key} — {d.name}: {d.value} erledigt</div>
                     )}
                     <span style={{ fontSize: 11, fontWeight: 700, color: T.textSecondary, marginBottom: 4 }}>{d.value}</span>
                     <div
@@ -161,80 +161,117 @@ export function WeeklyVolumeChart({ days }) {
   )
 }
 
-// Horizontal ranked bar chart — magnitude per category (e.g. exercises per muscle group).
-export function MuscleGroupChart({ muscleCounts }) {
+function startOfWeekKey(dateStr) {
+  const d = new Date(`${dateStr}T00:00:00`)
+  const mondayOffset = (d.getDay() + 6) % 7
+  d.setDate(d.getDate() - mondayOffset)
+  return d.toISOString().slice(0, 10)
+}
+
+function formatShortDate(dateStr) {
+  const d = new Date(`${dateStr}T00:00:00`)
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+// One weight entry per calendar week — the latest logged value in that week.
+function weeklyWeights(weightHistory) {
+  const sorted = [...weightHistory].sort((a, b) => a.date.localeCompare(b.date))
+  const byWeek = new Map()
+  for (const entry of sorted) byWeek.set(startOfWeekKey(entry.date), entry)
+  return [...byWeek.entries()].map(([weekStart, entry]) => ({ weekStart, weight: entry.weight }))
+}
+
+// Line chart — bodyweight trend, one point per week.
+export function WeightTrendChart({ weightHistory }) {
   const [hover, setHover] = useState(null)
   const [showTable, setShowTable] = useState(false)
 
-  const data = Object.entries(muscleCounts).sort((a, b) => b[1] - a[1]).map(([muscle, count]) => ({ muscle, count }))
-  const max = Math.max(...data.map(d => d.count), 1)
-  const ticks = niceTicks(max)
-  const niceMax = ticks[ticks.length - 1]
-  const cols = '82px 1fr 26px'
+  const data = weeklyWeights(weightHistory)
+
+  if (data.length === 0) {
+    return (
+      <div style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, padding: '28px 18px', textAlign: 'center' }}>
+        <div style={{ fontSize: 13, color: T.textMuted, lineHeight: 1.6 }}>Noch keine Gewichtsdaten.<br />Trage dein Gewicht im Profil ein, um deinen Trend zu sehen.</div>
+      </div>
+    )
+  }
 
   if (showTable) {
     return (
       <div>
-        <DataTable headers={['Muskelgruppe', 'Übungen']} rows={data.map(d => [d.muscle, d.count])} />
+        <DataTable headers={['Woche', 'Gewicht (kg)']} rows={data.map(d => [formatShortDate(d.weekStart), d.weight])} />
         <TableToggle show={showTable} onToggle={() => setShowTable(false)} />
       </div>
     )
   }
 
+  const weights = data.map(d => d.weight)
+  const rawMin = Math.min(...weights)
+  const rawMax = Math.max(...weights)
+  const pad = Math.max(1, Math.ceil((rawMax - rawMin) * 0.25))
+  const min = Math.floor(rawMin - pad)
+  const max = Math.ceil(rawMax + pad)
+  const range = max - min
+  const ticks = [min, Math.round((min + max) / 2), max]
+  const plotHeight = 140
+  const plotWidth = Math.max(220, data.length * 60)
+  const lineColor = RAMP[1]
+
+  const points = data.map((d, i) => ({
+    ...d,
+    x: data.length === 1 ? plotWidth / 2 : (i / (data.length - 1)) * plotWidth,
+    y: plotHeight - ((d.weight - min) / range) * plotHeight,
+  }))
+  const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')
+
   return (
     <div>
       <div
         role="img"
-        aria-label={`Balkendiagramm, Übungen pro Muskelgruppe: ${data.map(d => `${d.muscle} ${d.count}`).join(', ')}.`}
-        style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, padding: '16px 14px 14px' }}
+        aria-label={`Liniendiagramm, Körpergewicht pro Woche: ${data.map(d => `${formatShortDate(d.weekStart)} ${d.weight} Kilogramm`).join(', ')}.`}
+        style={{ border: `1px solid ${T.border}`, borderRadius: T.radiusMd, padding: '18px 14px 14px', display: 'grid', gridTemplateColumns: '30px 1fr', gap: 8 }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {data.map((d, i) => {
-            const pct = (d.count / niceMax) * 100
-            const isHover = hover === i
-            return (
-              <div key={d.muscle} style={{ display: 'grid', gridTemplateColumns: cols, alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, textAlign: 'right' }}>{d.muscle}</span>
-                <div style={{ position: 'relative', height: 14 }}>
-                  <div style={{ position: 'absolute', inset: 0, background: T.surface2, borderRadius: 4 }} />
-                  <div
-                    tabIndex={0}
-                    onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
-                    onFocus={() => setHover(i)} onBlur={() => setHover(null)}
-                    style={{
-                      position: 'absolute', left: 0, top: 0, bottom: 0, width: `${pct}%`, minWidth: 6,
-                      background: rampColor(pct), borderRadius: 4,
-                      transition: 'width 0.5s ease, opacity 0.15s', opacity: isHover ? 0.8 : 1,
-                      cursor: 'pointer', outline: 'none',
-                      boxShadow: isHover ? `0 0 0 3px ${T.primaryTint}` : 'none',
-                    }}
-                  />
-                  {isHover && (
-                    <div style={{
-                      position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-                      ...(pct > 60 ? { right: `calc(${100 - pct}% + 8px)` } : { left: `calc(${pct}% + 8px)` }),
-                      background: T.textPrimary, color: '#fff', fontSize: 11, fontWeight: 600,
-                      padding: '5px 9px', borderRadius: 8, whiteSpace: 'nowrap', zIndex: 2, pointerEvents: 'none',
-                    }}>{d.muscle}: {d.count} Übungen</div>
-                  )}
-                </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: T.textSecondary }}>{d.count}</span>
-              </div>
-            )
-          })}
+        <div style={{ position: 'relative', height: plotHeight }}>
+          {ticks.map((t, i) => (
+            <span key={i} style={{
+              position: 'absolute', right: 0, bottom: `calc(${((t - min) / range) * 100}% - 6px)`,
+              fontSize: 10, color: T.textMuted, fontWeight: 500,
+            }}>{t}</span>
+          ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 10, marginTop: 10 }}>
-          <span />
-          <div style={{ position: 'relative', height: 14 }}>
-            {ticks.map((t, i) => (
-              <span key={i} style={{
-                position: 'absolute', left: `${(t / niceMax) * 100}%`, transform: 'translateX(-50%)',
-                fontSize: 10, color: T.textMuted, fontWeight: 500,
-              }}>{t}</span>
-            ))}
+        <div style={{ overflowX: 'auto' }}>
+          <div style={{ width: plotWidth }}>
+            <svg width={plotWidth} height={plotHeight} viewBox={`0 0 ${plotWidth} ${plotHeight}`} style={{ display: 'block', overflow: 'visible' }}>
+              {ticks.map((t, i) => (
+                <line key={i}
+                  x1={0} x2={plotWidth}
+                  y1={plotHeight - ((t - min) / range) * plotHeight} y2={plotHeight - ((t - min) / range) * plotHeight}
+                  stroke={T.surface2} strokeWidth={1}
+                />
+              ))}
+              <path d={path} fill="none" stroke={lineColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              {points.map((p, i) => (
+                <circle
+                  key={p.weekStart}
+                  tabIndex={0}
+                  cx={p.x} cy={p.y} r={hover === i ? 6 : 4}
+                  fill={lineColor} stroke="#fff" strokeWidth={1.5}
+                  style={{ cursor: 'pointer', outline: 'none', transition: 'r 0.15s' }}
+                  onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
+                  onFocus={() => setHover(i)} onBlur={() => setHover(null)}
+                />
+              ))}
+            </svg>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${data.length}, 1fr)`, marginTop: 8 }}>
+              {data.map(d => (
+                <span key={d.weekStart} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: T.textMuted }}>{formatShortDate(d.weekStart)}</span>
+              ))}
+            </div>
           </div>
-          <span />
         </div>
+      </div>
+      <div style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary, marginTop: 8, textAlign: 'center', visibility: hover === null ? 'hidden' : 'visible' }}>
+        {hover !== null ? `${formatShortDate(points[hover].weekStart)}: ${points[hover].weight} kg` : '—'}
       </div>
       <TableToggle show={showTable} onToggle={() => setShowTable(true)} />
     </div>
