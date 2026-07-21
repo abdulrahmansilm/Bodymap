@@ -115,6 +115,7 @@ function VolumePerSessionChart({ history }) {
 // Übersicht mit Stats, Körperdaten/BMI und Charts, basiert komplett auf dem generierten Plan
 export default function DashboardScreen({ user, plan, completedDays, weightHistory }) {
   const [refreshTick, setRefreshTick] = useState(0)
+  const [showBmiInfo, setShowBmiInfo] = useState(false)
   if (!plan) return null
 
   const history = loadSessionHistory()
@@ -130,6 +131,8 @@ export default function DashboardScreen({ user, plan, completedDays, weightHisto
   const bmi = (user.weight / ((user.height / 100) ** 2)).toFixed(1)
   const bmiLabel = bmi < 18.5 ? 'Untergewicht' : bmi < 25 ? 'Normalgewicht' : bmi < 30 ? 'Übergewicht' : 'Adipositas'
   const bmiColor = bmi < 18.5 ? '#2196F3' : bmi < 25 ? T.primary : bmi < 30 ? '#F59E0B' : '#EF4444'
+  const idealMin = (18.5 * ((user.height / 100) ** 2)).toFixed(1)
+  const idealMax = (24.9 * ((user.height / 100) ** 2)).toFixed(1)
 
   const loadDemoData = () => {
     saveSessionHistory(buildDemoHistory())
@@ -175,8 +178,34 @@ export default function DashboardScreen({ user, plan, completedDays, weightHisto
               <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 2 }}>BMI</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: bmiColor }}>{bmi}</div>
             </div>
-            <div style={{ background: bmiColor + '18', borderRadius: 10, padding: '8px 16px', fontSize: 14, fontWeight: 700, color: bmiColor }}>{bmiLabel}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ background: bmiColor + '18', borderRadius: 10, padding: '8px 16px', fontSize: 14, fontWeight: 700, color: bmiColor }}>{bmiLabel}</div>
+              <button
+                onClick={() => setShowBmiInfo(v => !v)}
+                aria-label="BMI-Info"
+                style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  border: `1px solid ${T.borderStrong}`, background: 'transparent',
+                  color: T.textMuted, fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', padding: 0, lineHeight: 1,
+                }}
+              >
+                i
+              </button>
+            </div>
           </div>
+          {showBmiInfo && (
+            <div style={{ background: T.surface2, borderRadius: T.radiusSm, padding: 20, marginTop: 14 }}>
+              <div style={{ fontSize: 13, color: T.textSecondary, marginBottom: 10 }}>
+                Idealer Bereich bei {user.height} cm: <strong>{idealMin}–{idealMax} kg</strong> (BMI 18.5–24.9)
+              </div>
+              <div style={{ fontSize: 13, color: T.textMuted, marginBottom: 4 }}>Untergewicht: unter 18.5</div>
+              <div style={{ fontSize: 13, color: T.textMuted, marginBottom: 4 }}>Normalgewicht: 18.5–24.9</div>
+              <div style={{ fontSize: 13, color: T.textMuted, marginBottom: 4 }}>Übergewicht: 25–29.9</div>
+              <div style={{ fontSize: 13, color: T.textMuted }}>Adipositas: ab 30</div>
+            </div>
+          )}
         </div>
 
         <div style={{ marginBottom: 32 }}>
